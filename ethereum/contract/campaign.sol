@@ -1,8 +1,20 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^ 0.4.17;
+pragma solidity >= 0.6.1;
 //create a formula for a personally weighted voting system
 contract factory{
-    
+    address public manager;
+    campaign[] public deployedCampaigns;
+    constructor(){
+        manager = msg.sender;
+    }
+    function createCampaign(uint min_val, uint threshold) public{
+        // require(msg.sender == manager);
+        campaign newCampaign = new campaign(min_val, threshold, msg.sender);
+        deployedCampaigns.push(newCampaign); 
+    }
+    function getDeployedCampaigns() public view returns(campaign[] memory) {
+        return deployedCampaigns;
+    }
 }
 contract campaign{
     address public manager;
@@ -11,6 +23,8 @@ contract campaign{
     uint reqNumber;
     uint approveThreshlod;
     uint numberOfApprovers;
+    
+    mapping(uint => request) requests; //cannot initialize struct with mappings normally( through array of requests)
     
     struct approver{
         uint stakeValue;
@@ -28,14 +42,14 @@ contract campaign{
         mapping(address => uint) state;
         
     }
-    request[]  public requests;
+    // request[]  public requests; not valid anymore
     modifier restricted(){
         require(msg.sender == manager);
         _;
     }
     
-    constructor(uint min_val,uint threshold) public{
-        manager = msg.sender;
+    constructor(uint min_val,uint threshold, address creator) {
+        manager = creator;
         minContribution = min_val;
         approveThreshlod = threshold;
         reqNumber = 0;
@@ -48,10 +62,10 @@ contract campaign{
         numberOfApprovers+=1;
     } 
     
-    function createRequest(string description, uint value, address recipient) public restricted{
+    function createRequest(string memory description , uint value, address recipient) public restricted{
         reqNumber++; //updation;
         
-        request memory req;
+        request storage req = requests[reqNumber++];
         req.description = description;
         req.value = value;
         req.recipient = recipient;
@@ -61,7 +75,6 @@ contract campaign{
         req.approved = false;
         req.isTransferred = false;
         
-        requests.push(req);
     }
     function approveRequest(uint req_number, bool isApproved) public{
         //try to close the incoming after request has been approved
