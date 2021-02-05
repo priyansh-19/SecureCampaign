@@ -4,12 +4,13 @@ import Campaign from '../../ethereum/campaignInstance';
 import {Card, Grid } from'semantic-ui-react';
 import web3 from '../../ethereum/web3'
 import ContributeForm from '../../components/ContributeForm';
+import Link from '../../routes';
 
 class CampaignShow extends Component {
 
     static async getInitialProps(props) {
         const address = props.query.address;
-        const campaign = Campaign(props.query.address);
+        const campaign = await Campaign(props.query.address);
         const stats = await campaign.methods.returnStats().call();
         // console.log(stats);
         //stats is an object with numbered keys
@@ -77,6 +78,12 @@ class CampaignShow extends Component {
                 <Grid>
                     <Grid.Column width = {10}>
                         {this.renderCards()}
+                        {/* <Link route = {`campaigns/${this.props.address}/requests`}> */}
+                        <Link route = {`/campaigns/${this.props.address}/requests`}>
+                            <a>
+                                <Button primary>View Requests</Button>
+                            </a>
+                        </Link>
                     </Grid.Column>
                     <Grid.Column width = {6}>
                         <ContributeForm address = {this.props.address} />

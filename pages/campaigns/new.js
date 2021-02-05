@@ -38,7 +38,7 @@ class campaignNew extends Component {
         return(
             <Layout>
                 <h3>Create a Campaign</h3>
-                <Form onSubmit = {this.onSubmit} error = {this.state.errorMessage}>
+                <Form onSubmit = {this.onSubmit} error = {!!this.state.errorMessage}>
                     {/* //no parenthesis here */}
                     <Form.Field>
                         <label>Minimum Contribution</label>
