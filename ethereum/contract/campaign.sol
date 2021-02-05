@@ -17,6 +17,7 @@ contract factory{
     }
 }
 contract campaign{
+    
     address public manager;
     uint public minContribution;
     mapping(address => approver) approvers;
@@ -58,8 +59,11 @@ contract campaign{
     
     function contribute() public payable{
         require(msg.value >= minContribution);
-        approvers[msg.sender].stakeValue = msg.value;
+        if(approvers[msg.sender].stakeValue == 0){
         numberOfApprovers+=1;
+        }
+        approvers[msg.sender].stakeValue += msg.value;
+        //edit this part, number of approvers should not increase when someone contributes again
     } 
     
     function createRequest(string memory description , uint value, address recipient) public restricted{
@@ -107,5 +111,15 @@ contract campaign{
         }
         //the request has been processed now
     }
+    //this function return the stats for the frontend display
+    function returnStats() public view returns(uint,uint,uint,uint,uint,address){
+
+        return(reqNumber, approveThreshlod, minContribution,address(this).balance,numberOfApprovers, manager);
+        
+    }
+    function getRequestCount() public view returns (uint){
+        return reqNumber;
+    }
+
+    }
     
-}
