@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Form, Input, Message, Button } from 'semantic-ui-react';
 import Campaign from '../ethereum/campaignInstance';
 import web3 from '../ethereum/web3';
-import {Router} from '../routes';
+// import {Router} from '../routes';
 // import Button from 'semantic-ui-react/dist/commonjs/elements/Button';
 
 class ContributeForm extends Component {
@@ -46,6 +46,7 @@ class ContributeForm extends Component {
                     Contribute
                 </Button>
             </Form>
+            // <h1>form</h1>
         )
     }
 }
