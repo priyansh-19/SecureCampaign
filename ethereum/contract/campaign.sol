@@ -67,7 +67,7 @@ contract campaign{
     } 
     
     function createRequest(string memory description , uint value, address recipient) public restricted{
-        reqNumber++; //updation;
+         //updation;
         
         request storage req = requests[reqNumber++];
         req.description = description;

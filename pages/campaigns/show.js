@@ -61,12 +61,12 @@ class CampaignShow extends Component {
                 // description:'The number of people who have donated to this campaign ',
                 style:{overflowWrap : 'break-word'}
             },
-            // {
-            //     header:web3.utils.fromWei(balance,'ether'),
-            //     meta:'Campaign Balance (ether)',
-            //     // description:'The number of people who have donated to this campaign ',
-            //     style:{overflowWrap : 'break-word'}
-            // },
+            {
+                header:reqNumber ,
+                meta:'Requests',
+                description:'The requests created in this campaign',
+                style:{overflowWrap : 'break-word'}
+            },
         ];
         return <Card.Group items = {items} />;
     }

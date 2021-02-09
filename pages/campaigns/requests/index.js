@@ -2,12 +2,19 @@ import React, {Component} from 'react';
 import Button from 'semantic-ui-react/dist/commonjs/elements/Button';
 import Layout from '../../../components/Layout';
 import {Link} from '../../../routes';
+import Campaign from '../../../ethereum/campaignInstance';
+
 
 class RequestIndex extends Component {
     static async getInitialProps(props){
         const {address} = props.query;
-        return { address:address };
+
+        const campaign =  Campaign(address);
+        const req = await campaign.methods.minContribution.call();
+        console.log(req);
+        return {address};
     }
+
     render() {
         return (
             <Layout>
