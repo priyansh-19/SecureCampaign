@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >= 0.6.1;
+pragma experimental ABIEncoderV2;
 //create a formula for a personally weighted voting system
 contract factory{
     address public manager;
@@ -25,7 +26,7 @@ contract campaign{
     uint approveThreshlod;
     uint numberOfApprovers;
     
-    mapping(uint => request) requests; //cannot initialize struct with mappings normally( through array of requests)
+    request [] public requests; //cannot initialize struct with mappings normally( through array of requests)
     
     struct approver{
         uint stakeValue;
@@ -40,7 +41,7 @@ contract campaign{
         bool isProcessed;
         bool approved;
         bool isTransferred;
-        mapping(address => uint) state;
+        // mapping(address => uint) state;
         
     }
     // request[]  public requests; not valid anymore
@@ -68,8 +69,8 @@ contract campaign{
     
     function createRequest(string memory description , uint value, address recipient) public restricted{
          //updation;
-        
-        request storage req = requests[reqNumber++];
+        reqNumber++;
+        request storage req ;
         req.description = description;
         req.value = value;
         req.recipient = recipient;
@@ -78,6 +79,7 @@ contract campaign{
         req.denials = 0;
         req.approved = false;
         req.isTransferred = false;
+        requests.push(req);
         
     }
     function approveRequest(uint req_number, bool isApproved) public{
@@ -86,14 +88,14 @@ contract campaign{
         
         request storage req = requests[req_number-1];
         require(!req.isProcessed);
-        require((req.state[msg.sender] == 0));
+        // require((req.state[msg.sender] == 0));
         //if the request is processed or the person has already voted then we return without processing
  
         if(!isApproved){
             req.denials+=1;
-            req.state[msg.sender] = 2;
+            // req.state[msg.sender] = 2;
         }
-        req.state[msg.sender] = 1;
+        // req.state[msg.sender] = 1;
     }
     function checkApproval(uint req_number) public restricted{
         //here we check the approveal of a certain request
@@ -120,6 +122,8 @@ contract campaign{
     function getRequestCount() public view returns (uint){
         return reqNumber;
     }
-
+    function getRequest(uint req_number) public view returns(request memory){
+        return requests[req_number];
     }
+}
     

@@ -9,9 +9,14 @@ class RequestIndex extends Component {
     static async getInitialProps(props){
         const {address} = props.query;
 
-        const campaign =  Campaign(address);
-        const req = await campaign.methods.minContribution.call();
-        console.log(req);
+        const campaign = await Campaign(address);
+        const numReq = await campaign.methods.getRequestCount().call();
+        console.log(numReq);
+        let req;
+        if(numReq!=0){
+            req = await campaign.methods.getRequest(numReq-1).call();
+            console.log(req);
+        }   
         return {address};
     }
 

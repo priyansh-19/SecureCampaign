@@ -29,7 +29,7 @@ class RequestNew extends Component {
         try{
             const accounts = await web3.eth.getAccounts();
             await campaign.methods.createRequest(description,web3.utils.toWei(value),recipient)
-            .send({from:accounts[0]});
+            .send({from:accounts[0],gas:'10000000',});
          Router.pushRoute(`/campaigns/${this.props.address}/requests`);
          
 
