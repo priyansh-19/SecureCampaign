@@ -22,11 +22,12 @@ class CampaignShow extends Component {
             minimumContribution : stats[2],
             balance : stats[3],
             numOfApprovers : stats[4],
-            manager : stats[5]
+            manager : stats[5],
 
         };
     }
     renderCards() {
+        // console.log('stats in show',this.props.stats);
         const {
             reqNumber,
             approveThreshold,

@@ -20,7 +20,7 @@ contract factory{
 contract campaign{
     
     address public manager;
-    uint public minContribution;
+    uint minContribution;
     mapping(address => approver) approvers;
     uint reqNumber;
     uint approveThreshlod;
@@ -42,7 +42,6 @@ contract campaign{
         bool approved;
         bool isTransferred;
         // mapping(address => uint) state;
-        
     }
     // request[]  public requests; not valid anymore
     modifier restricted(){
@@ -70,7 +69,7 @@ contract campaign{
     function createRequest(string memory description , uint value, address recipient) public restricted{
          //updation;
         reqNumber++;
-        request storage req ;
+        request memory req ;
         req.description = description;
         req.value = value;
         req.recipient = recipient;
