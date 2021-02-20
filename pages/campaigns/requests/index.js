@@ -21,6 +21,7 @@ class RequestIndex extends Component {
         for(let i=0;i<numReq;i++){
             let req;
             req = await campaign.methods.getRequest(i).call();
+            console.log(req);
             requests.push(req);
         }
         return {address,requests,numOfApprovers,numReq};
@@ -53,6 +54,7 @@ class RequestIndex extends Component {
                         <HeaderCell>Denials</HeaderCell>
                         <HeaderCell>Status</HeaderCell>
                         <HeaderCell>Vote</HeaderCell>
+                        <HeaderCell>Process Request</HeaderCell>
                     </Row>
                 </Header>
                 <Body>

@@ -32,9 +32,8 @@ class CampaignIndex extends Component{
 
         return(
             <Layout>
-                <div>
-                   
-                    <h3>Open Campaigns </h3>
+                <div style = {{marginTop:'10px'}}>
+                    <h3> Open Campaigns </h3>
                     <Link route = '/campaigns/new'>
                         <a>
                         <Button

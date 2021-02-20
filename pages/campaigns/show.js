@@ -12,6 +12,7 @@ class CampaignShow extends Component {
         const address = props.query.address;
         const campaign = await Campaign(props.query.address);
         const stats = await campaign.methods.returnStats().call();
+        console.log(stats);
         // console.log(stats);
         //stats is an object with numbered keys
 

@@ -37,9 +37,22 @@ class RequestRow extends Component{
         );
 
     }
+    process = async() => {
+        const index = this.props.request.index;         
+        console.log('req index is',index);  
+        const req = this.props.request;
+        if( Math.floor(Date.now()/1000) < req.deadline){console.log('Time is remaining');}
+        const campaign = await Campaign(this.props.address);
+        const accounts = await web3.eth.getAccounts();
+        await campaign.methods.processRequest(index)
+        .send({from:accounts[0],gas:'10000000',});
+        console.log('req is being processed');
+    }
+
     approve(){
        console.log('approve'); 
     }
+
     deny = async() =>{
 
         const campaign = await Campaign(this.props.address);
@@ -64,6 +77,9 @@ class RequestRow extends Component{
                 <Cell>
                     <Button size = 'tiny' color = 'teal' basic onClick = {this.approve}>Approve</Button>
                     <Button size = 'tiny' color = 'red' basic onClick = {this.deny}>Deny</Button>
+                </Cell>
+                <Cell>
+                <Button size = 'tiny' color = 'teal' basic onClick = {this.process}>Process</Button>
                 </Cell>
             </Row>
         );

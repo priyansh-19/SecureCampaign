@@ -1,6 +1,4 @@
 // const compiledFile = require("./build/factory.json");
-
-
 // console.log(bytecode);
 const { interfaces } = require('mocha');
 const HDWalletProvider = require('truffle-hdwallet-provider');
@@ -23,7 +21,7 @@ const deploy = async() => {
 
     const result =  await new web3.eth.Contract(interface)
     .deploy({data:bytecode})
-    .send({gas:'10000000',from:accounts[0], gasPrice: 2000000000,});
+    .send({gas:'10000000',from:accounts[0], gasPrice: 1000000000,});
     
     // console.log(interface);
     console.log('contract deployed to ',result.options.address);

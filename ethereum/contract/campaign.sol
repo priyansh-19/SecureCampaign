@@ -5,12 +5,14 @@ pragma experimental ABIEncoderV2;
 contract factory{
     address public manager;
     campaign[] public deployedCampaigns;
+    uint timeWindow;
     constructor(){
+        timeWindow = 60;
         manager = msg.sender;
     }
     function createCampaign(uint min_val, uint threshold) public{
         // require(msg.sender == manager);
-        campaign newCampaign = new campaign(min_val, threshold, msg.sender);
+        campaign newCampaign = new campaign(min_val, threshold, timeWindow, msg.sender);
         deployedCampaigns.push(newCampaign); 
     }
     function getDeployedCampaigns() public view returns(campaign[] memory) {
@@ -22,9 +24,11 @@ contract campaign{
     address public manager;
     uint minContribution;
     mapping(address => approver) approvers;
+    mapping(address => uint) [] voteStatus;//array of mapping of addresses
     uint reqNumber;
     uint approveThreshlod;
     uint numberOfApprovers;
+    uint timeWindow;
     
     request [] public requests; //cannot initialize struct with mappings normally( through array of requests)
     
@@ -39,8 +43,8 @@ contract campaign{
         uint index;
         uint denials;
         bool isProcessed;
-        bool approved;
-        bool isTransferred;
+        bool isApproved;
+        uint deadline;
         // mapping(address => uint) state;
     }
     // request[]  public requests; not valid anymore
@@ -49,12 +53,13 @@ contract campaign{
         _;
     }
     
-    constructor(uint min_val,uint threshold, address creator) {
+    constructor(uint min_val,uint threshold,uint timewindow, address creator) {
         manager = creator;
         minContribution = min_val;
         approveThreshlod = threshold;
         reqNumber = 0;
         numberOfApprovers = 0;
+        timeWindow = timewindow;
     }
     
     function contribute() public payable{
@@ -76,8 +81,8 @@ contract campaign{
         req.index = reqNumber;
         req.isProcessed = false;
         req.denials = 0;
-        req.approved = false;
-        req.isTransferred = false;
+        req.isApproved = false;
+        req.deadline = block.timestamp + timeWindow;
         requests.push(req);
         
     }
@@ -86,31 +91,40 @@ contract campaign{
         // what if new people enter the pool after the request goes live, would they be able to approve?
         
         request storage req = requests[req_number-1];
-        require(!req.isProcessed);
-        // require((req.state[msg.sender] == 0));
+        require(approvers[msg.sender].stakeValue != 0);//voter must be an approver
+        require(!req.isProcessed);//request should not have been proccessed
+        require((voteStatus[req_number][msg.sender] == 0));//approver should not have already voted
         //if the request is processed or the person has already voted then we return without processing
  
         if(!isApproved){
             req.denials+=1;
-            // req.state[msg.sender] = 2;
+            voteStatus[req_number][msg.sender] = 2;
+            
         }
-        // req.state[msg.sender] = 1;
+       voteStatus[req_number][msg.sender] = 1;
     }
-    function checkApproval(uint req_number) public restricted{
+    function processRequest(uint req_number) public restricted{
         //here we check the approveal of a certain request
         //this function will be called after a certain amount of time has been passed since the requst was initiated( find out how this works)
         
         request storage req = requests[req_number - 1];
-        // if(req.isProcessed){return ;}
         require(!req.isProcessed);
+        
         uint total = numberOfApprovers;
         uint denied = req.denials;
         uint percentage = (denied*100)/total;
         req.isProcessed = true;
         if(percentage >= approveThreshlod){
-            req.approved = true;
+            req.isApproved = true;
+            transferRequestMoney(req_number);
         }
         //the request has been processed now
+    }
+    function transferRequestMoney(uint req_number) public restricted{
+        request storage req = requests[req_number - 1];
+        require(req.isApproved);
+        address payable recipient = payable(req.recipient);
+        recipient.transfer(req.value);
     }
     //this function return the stats for the frontend display
     function returnStats() public view returns(uint,uint,uint,uint,uint,address){
