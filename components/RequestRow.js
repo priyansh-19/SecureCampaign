@@ -8,30 +8,24 @@ import Campaign from '../../Campaign/ethereum/campaignInstance';
 
 class RequestRow extends Component{
     
-    static  getInitialProps(props){
+    static  async getInitialProps(props){
         const req = props.request;
+        // console.log(req);
         const numOfApprovers = props.numOfApprovers;
-        let status = 'Active';
-        if(req.isTransferred){
-            status = 'Transferred';
-        }
-        else if(req.approved){
-            status = 'Approved';
-        }
-        return {status, numOfApprovers}
-        //create for denial
+        canProcess = (Math.floor(Date.now()/1000) > req.deadline && !req.isProcessed ) ? true : false;
+        return {numOfApprovers,canProcess}
     }
     getStatus(){
-
+       
         const req = this.props.request;
-        let status = 'Active';
-        if(req.isTransferred){
-            status = 'Transferred';
-        }
-        else if(req.approved){
-            status = 'Approved';
-        }
-        const {Row,Cell} = Table;
+        console.log(req);
+        let status;
+        const canProcess = (Math.floor(Date.now()/1000) > req.deadline && !req.isProcessed ) ? true : false;
+        if(!req.isProcessed && !canProcess){status = "Open for Voting"}
+        else if(canProcess && !req.isProcessed){status = "Ready to Process"}
+        else if(req.isProcessed && req.isApproved){status = "Transferred"}
+        else if(req.isProcessed && !req.isApproved){status = "Denied"}
+        
         return (
             status
         );
@@ -41,7 +35,7 @@ class RequestRow extends Component{
         const index = this.props.request.index;         
         console.log('req index is',index);  
         const req = this.props.request;
-        if( Math.floor(Date.now()/1000) < req.deadline){console.log('Time is remaining');}
+        // if( Math.floor(Date.now()/1000) < req.deadline){console.log('Time is remaining');}
         const campaign = await Campaign(this.props.address);
         const accounts = await web3.eth.getAccounts();
         await campaign.methods.processRequest(index)
@@ -66,21 +60,25 @@ class RequestRow extends Component{
         const {Row,Cell} = Table;
         const req = this.props.request;
         return (
-            <Row>
+           
+            <Row positive = {req.isApproved} negative = {req.isProcessed && (!req.isApproved) }>
                 <Cell>{req.index}</Cell>
                 <Cell>{req.description}</Cell>
                 <Cell>{(web3.utils.fromWei(String(req.value),'ether'))}</Cell>
                 {/* <Cell>{req.value}</Cell> */}
                 <Cell>{req.recipient}</Cell>
                 <Cell>{req.denials}/{this.props.numOfApprovers}</Cell>
+                <Cell>
+                    {   //disable button when approved has denied
+                        <Button size = 'tiny' color = 'red' disabled = {req.isProcessed} basic onClick = {this.deny}>Deny</Button>
+    
+                    }
+                </Cell>
+                <Cell>
+                <Button size = 'tiny' color = 'blue' basic onClick = {this.process} disabled = {req.isProcessed}>Process</Button>
+                </Cell>
                 <Cell>{this.getStatus()}</Cell>
-                <Cell>
-                    <Button size = 'tiny' color = 'teal' basic onClick = {this.approve}>Approve</Button>
-                    <Button size = 'tiny' color = 'red' basic onClick = {this.deny}>Deny</Button>
-                </Cell>
-                <Cell>
-                <Button size = 'tiny' color = 'teal' basic onClick = {this.process}>Process</Button>
-                </Cell>
+                
             </Row>
         );
     }

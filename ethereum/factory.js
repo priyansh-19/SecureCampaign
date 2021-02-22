@@ -8,7 +8,7 @@ const addressPath = path.resolve(__dirname,'address.txt');
 // console.log(web3);
 const instance = new web3.eth.Contract(
      campaignFactory.abi,
-    '0x20Fde0C21B940c4BfE2df2cADd8a33CDE416C0ed'
+    '0xc836404765083619Ff67B9c2948D7eC5bf8aC4aE'
     // addressFile
 );
 

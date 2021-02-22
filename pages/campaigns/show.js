@@ -7,12 +7,13 @@ import ContributeForm from '../../components/ContributeForm';
 import {Link} from '../../routes';
 
 class CampaignShow extends Component {
-
+    
     static async getInitialProps(props) {
         const address = props.query.address;
         const campaign = await Campaign(props.query.address);
         const stats = await campaign.methods.returnStats().call();
-        console.log(stats);
+       
+        // console.log(stats);
         // console.log(stats);
         //stats is an object with numbered keys
 
@@ -24,11 +25,11 @@ class CampaignShow extends Component {
             balance : stats[3],
             numOfApprovers : stats[4],
             manager : stats[5],
-
         };
     }
     renderCards() {
         // console.log('stats in show',this.props.stats);
+       
         const {
             reqNumber,
             approveThreshold,

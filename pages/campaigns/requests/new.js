@@ -21,22 +21,22 @@ class RequestNew extends Component {
     onSubmit = async (event) =>{
 
         event.preventDefault();
-        
         const campaign = Campaign(this.props.address);
         const {value,description,recipient} = this.state;
         
         this.setState({isLoading:true,errorMessage:''});
         try{
+            
             const accounts = await web3.eth.getAccounts();
-            await campaign.methods.createRequest(description,web3.utils.toWei(value),recipient)
+            await campaign.methods.createRequest(description,web3.utils.toWei(value,'ether'),recipient)
             .send({from:accounts[0],gas:'10000000',});
-         Router.pushRoute(`/campaigns/${this.props.address}/requests`);
-         
+             Router.pushRoute(`/campaigns/${this.props.address}/requests`);
 
         } catch(err){
             this.setState({errorMessage:err.message});
         }
         this.setState({isLoading:false});
+
     }
     render() {
         return (

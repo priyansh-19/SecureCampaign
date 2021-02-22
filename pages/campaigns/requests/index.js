@@ -8,8 +8,8 @@ import RequestRow from '../../../components/RequestRow';
 
 class RequestIndex extends Component {
     static async getInitialProps(props){
-        const {address} = props.query;
 
+        const {address} = props.query;
         const campaign = await Campaign(address);
         let numReq = await campaign.methods.getRequestCount().call();
         const stats = await campaign.methods.returnStats().call();
@@ -25,6 +25,7 @@ class RequestIndex extends Component {
             requests.push(req);
         }
         return {address,requests,numOfApprovers,numReq};
+        
     }
     renderRow() {
      
@@ -44,7 +45,7 @@ class RequestIndex extends Component {
         return (
             <Layout>
             <h3>Requests</h3>
-            <Table>
+            <Table color = 'blue'>
                 <Header>
                     <Row>
                         <HeaderCell>ID</HeaderCell>
@@ -52,9 +53,9 @@ class RequestIndex extends Component {
                         <HeaderCell>Amount</HeaderCell>
                         <HeaderCell>Recipient</HeaderCell>
                         <HeaderCell>Denials</HeaderCell>
-                        <HeaderCell>Status</HeaderCell>
                         <HeaderCell>Vote</HeaderCell>
                         <HeaderCell>Process Request</HeaderCell>
+                        <HeaderCell>Status</HeaderCell>
                     </Row>
                 </Header>
                 <Body>
@@ -64,7 +65,7 @@ class RequestIndex extends Component {
 
             <Link route={`/campaigns/${this.props.address}/requests/new`}  >
                 <a>
-                    <Button primary>Add Request</Button>
+                    <Button color = 'blue' size = 'tiny'  >Add Request</Button>
                 </a>
             </Link>
             </Layout>

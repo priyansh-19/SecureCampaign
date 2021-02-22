@@ -24,7 +24,7 @@ contract campaign{
     address public manager;
     uint minContribution;
     mapping(address => approver) approvers;
-    mapping(address => uint) [] voteStatus;//array of mapping of addresses
+    mapping(uint => mapping(address => uint) ) voteStatus;//array of mapping of addresses
     uint reqNumber;
     uint approveThreshlod;
     uint numberOfApprovers;
@@ -113,11 +113,12 @@ contract campaign{
         uint total = numberOfApprovers;
         uint denied = req.denials;
         uint percentage = (denied*100)/total;
-        req.isProcessed = true;
-        if(percentage >= approveThreshlod){
+        
+        if(percentage <= approveThreshlod){
             req.isApproved = true;
             transferRequestMoney(req_number);
         }
+        req.isProcessed = true;
         //the request has been processed now
     }
     function transferRequestMoney(uint req_number) public restricted{
