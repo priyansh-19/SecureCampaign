@@ -7,7 +7,10 @@ import Campaign from '../../Campaign/ethereum/campaignInstance';
 
 
 class RequestRow extends Component{
-    
+    state = {
+        Status:'',
+        denials:0,
+    }
     static  async getInitialProps(props){
         const req = props.request;
         // console.log(req);
@@ -25,7 +28,7 @@ class RequestRow extends Component{
         else if(canProcess && !req.isProcessed){status = "Ready to Process"}
         else if(req.isProcessed && req.isApproved){status = "Transferred"}
         else if(req.isProcessed && !req.isApproved){status = "Denied"}
-        
+        // this.setState({Status:status});
         return (
             status
         );
@@ -54,6 +57,7 @@ class RequestRow extends Component{
         const index = this.props.request.index;
         await campaign.methods.approveRequest(index,false)
         .send({from:accounts[0],gas:'10000000',});
+        this.setState({denials:this.state.denials+1});
     }
    
     render(){
@@ -67,7 +71,7 @@ class RequestRow extends Component{
                 <Cell>{(web3.utils.fromWei(String(req.value),'ether'))}</Cell>
                 {/* <Cell>{req.value}</Cell> */}
                 <Cell>{req.recipient}</Cell>
-                <Cell>{req.denials}/{this.props.numOfApprovers}</Cell>
+                <Cell>{this.state.denials}/{this.props.numOfApprovers}</Cell>
                 <Cell>
                     {   //disable button when approved has denied
                         <Button size = 'tiny' color = 'red' disabled = {req.isProcessed} basic onClick = {this.deny}>Deny</Button>
